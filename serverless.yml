@@ -1,23 +1,33 @@
-service: myserverlessproject
+service: ${self:custom.service.name}
 
 provider:
     name: aws
-    runtime: nodejs10.x
-    profile: serverlessUser
-    region: eu-west-1
+    runtime: nodejs12.x
+    region: us-east-1
+    profile: alex
+    stage: dev
 
 plugins:
     - serverless-s3-sync
     - serverless-webpack
+    - serverless-create-global-dynamodb-table
 
 package:
     individually: true
 
 custom:
+    service:
+        name: myserverlessprojectuploadbucketalex
     tableName: player-points
     s3Sync:
-        - bucketName: myserverlessprojectuploadbucket-12312
+        - bucketName: myserverlessprojectuploadbucketalex-123123
           localDir: UploadData
+    globalTables:
+        regions:
+            - us-east-1
+            - us-west-2
+        createStack: false
+    tag: player
 
 functions:
     getUser:
@@ -33,7 +43,7 @@ resources:
         DemoBucketUpload:
             Type: AWS::S3::Bucket
             Properties:
-                BucketName: myserverlessprojectuploadbucket-12312
+                BucketName: myserverlessprojectuploadbucketalex-123123
         MyDynamoDbTable:
             Type: AWS::DynamoDB::Table
             Properties:
@@ -45,3 +55,35 @@ resources:
                     - AttributeName: ID
                       KeyType: HASH
                 BillingMode: PAY_PER_REQUEST
+                StreamSpecification:
+                    StreamViewType: NEW_AND_OLD_IMAGES
+        coronavirus:
+            Type: "AWS::DynamoDB::Table"
+            Properties:
+                TableName: ${self:custom.service.name}-${self:provider.stage}-coronavirus-country
+                BillingMode: PAY_PER_REQUEST
+                AttributeDefinitions:
+                    - AttributeName: country
+                      AttributeType: S
+                    - AttributeName: continent
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: country
+                      KeyType: HASH
+                    - AttributeName: continent
+                      KeyType: RANGE
+                GlobalSecondaryIndexes:
+                    - IndexName: countryIndex
+                      KeySchema:
+                          - AttributeName: country
+                            KeyType: HASH
+                      Projection:
+                          ProjectionType: ALL
+                    - IndexName: continentIndex
+                      KeySchema:
+                          - AttributeName: continent
+                            KeyType: HASH
+                      Projection:
+                          ProjectionType: ALL
+                StreamSpecification:
+                    StreamViewType: NEW_AND_OLD_IMAGES

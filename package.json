@@ -1,0 +1,27 @@
+{
+  "name": "serverlessyoutubeseries",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "dependencies": {
+    "serverless-create-global-dynamodb-table": "^3.1.0",
+    "serverless-s3-sync": "^1.16.1"
+  },
+  "devDependencies": {
+    "serverless-webpack": "^5.4.0",
+    "webpack": "^5.26.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamWSoftware/ServerlessYoutubeSeries.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SamWSoftware/ServerlessYoutubeSeries/issues"
+  },
+  "homepage": "https://github.com/SamWSoftware/ServerlessYoutubeSeries#readme"
+}
